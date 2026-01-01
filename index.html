@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Game: Life Cycles</title>
+    <style>
+        :root {
+            --primary: #4A90E2; --success: #2ECC71; --warning: #F1C40F; --danger: #E74C3C;
+            --dark: #2C3E50; --board-w: 800px; --board-h: 600px;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif; background-color: #E3F2FD; margin: 0;
+            display: flex; justify-content: center; min-height: 100vh; user-select: none; padding: 20px 0;
+        }
+
+        .container { width: 100%; max-width: 1000px; text-align: center; }
+        .screen { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* START SCREEN */
+        .start-card {
+            background: white; padding: 50px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            display: inline-block; margin-top: 60px; width: 550px; border-top: 5px solid var(--primary);
+        }
+        input[type="text"] {
+            padding: 15px 20px; font-size: 18px; border-radius: 50px; border: 2px solid #E0E0E0; width: 80%;
+            margin: 25px 0; outline: none; text-align: center;
+        }
+        .btn-action {
+            padding: 15px 45px; border: none; border-radius: 50px; font-size: 20px; font-weight: bold;
+            cursor: pointer; color: white; background: var(--primary); transition: all 0.2s;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+        }
+        .btn-action:hover { transform: translateY(-3px); background: #357ABD; }
+
+        /* GAME SCREEN */
+        .hud {
+            display: flex; justify-content: space-between; align-items: center; background: white;
+            padding: 15px 30px; border-radius: 15px; margin-bottom: 20px; font-weight: bold; font-size: 18px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary);
+        }
+        .game-board-wrapper {
+            position: relative; width: var(--board-w); height: var(--board-h); margin: 0 auto;
+            border: 4px solid white; border-radius: 20px; overflow: hidden; background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .game-bg { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+
+        /* DROP ZONES */
+        .drop-zone {
+            position: absolute; display: flex; justify-content: center; align-items: center;
+            background: rgba(255, 255, 255, 0.95); border: 3px dashed #BDBDBD; border-radius: 12px;
+            font-size: 24px; color: #BDBDBD; font-weight: 900; z-index: 10; transition: 0.3s;
+        }
+        .drop-zone.hover { background: #E3F2FD; transform: scale(1.05); border-color: var(--primary); color: var(--primary); }
+        .drop-zone.correct { background: transparent; border: 3px solid var(--success); box-shadow: none; }
+        .drop-zone.correct span { display: none; }
+        .drop-zone.correct img { animation: popIn 0.5s; }
+
+        /* DOCK */
+        .dock {
+            margin-top: 25px; min-height: 110px; display: flex; justify-content: center; gap: 20px;
+            flex-wrap: wrap; background: white; padding: 20px; border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 3px solid #BDBDBD;
+        }
+        .draggable {
+            background: var(--primary); color: white; padding: 12px 25px; border-radius: 12px;
+            cursor: grab; font-weight: bold; font-size: 18px; box-shadow: 0 5px 0 #2980b9;
+        }
+        .draggable:active { transform: translateY(4px); box-shadow: 0 1px 0 #2980b9; }
+        .draggable.img-card {
+            background: white; border: 3px solid var(--primary); padding: 5px; width: 85px; height: 85px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .draggable.img-card img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(8px);
+        }
+        .modal-box {
+            background: white; padding: 40px; border-radius: 25px; text-align: center; width: 450px;
+            animation: slideUp 0.4s ease-out;
+        }
+        @keyframes slideUp { from {transform: translateY(50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+        @keyframes popIn { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+        .stat-box { background:#F8F9FA; padding:15px; margin:25px 0; border-radius:15px; text-align:left; border-left: 5px solid; }
+
+        /* --- TỌA ĐỘ VỊ TRÍ --- */
+        /* LEVEL 1: FROG */
+        .z-frog { width: 120px; height: 40px; }
+        #dz-frog { top: 20%; left: 42%; }
+        #dz-eggs { top: 49%; left: 78%; }
+        #dz-tadpole { top: 78%; left: 68%; }
+        #dz-legs { top: 84%; left: 17%; }
+        #dz-froglet { top: 49%; left: 3%; }
+
+        /* LEVEL 2: BIRD */
+        .z-bird-txt { width: 110px; height: 35px; background: rgba(255,255,255,0.95); border-color: var(--primary); color: var(--primary); }
+        .z-bird-img { width: 90px; height: 90px; border-radius: 50%; border-color: var(--warning); background: rgba(255,255,255,0.8); color: var(--warning); }
+        
+        /* Egg (Chỉ có ô chữ) */
+        #dz-t-egg { top: 28%; left: 44%; } /* Vị trí chữ Egg dưới hình trứng */
+        
+        /* Hatchling (Hình + Chữ) */
+        #dz-i-hatch { top: 33%; left: 73%; }
+        #dz-t-hatch { top: 51%; left: 71%; }
+        
+        /* Chick (Hình + Chữ) */
+        #dz-i-chick { top: 62%; left: 45%; }
+        #dz-t-chick { top: 80%; left: 44%; }
+        
+        /* Bird (Hình + Chữ) */
+        #dz-i-bird { top: 33%; left: 15%; }
+        #dz-t-bird { top: 51%; left: 14%; }
+
+    </style>
+</head>
+<body>
+
+    <div id="screen-start" class="screen active">
+        <div class="container">
+            <div class="start-card">
+                <h1>🧬 KHÁM PHÁ SINH HỌC</h1>
+                <p>Trò chơi tìm hiểu vòng đời động vật</p>
+                <input type="text" id="inp-name" placeholder="Nhập tên của em..." autocomplete="off">
+                <button class="btn-action" onclick="Game.start()">BẮT ĐẦU NGAY ▶</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="container">
+            <div class="hud">
+                <div>👤 <span id="ui-player" style="color: var(--primary)">Học sinh</span></div>
+                <div>⏳ <span id="ui-timer" style="color: var(--warning)">30</span>s</div>
+                <div>⭐ <span id="ui-score" style="color: var(--success)">0</span> điểm</div>
+            </div>
+            
+            <h2 id="ui-title" style="margin: 0 0 5px 0; color: var(--dark)">Level Title</h2>
+            <p id="ui-guide" style="margin: 0 0 20px 0; color: #666">Hướng dẫn chơi</p>
+
+            <div class="game-board-wrapper">
+                <img id="game-bg" class="game-bg" src="" alt="Background">
+                <div id="zones-area"></div>
+            </div>
+
+            <div id="dock" class="dock"></div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="modal-title">Kết quả</h2>
+            <p id="modal-msg">...</p>
+            <div id="stat-box-container" class="stat-box">
+                <p>✅ Số câu đúng: <b id="stat-correct">0</b></p>
+                <p>⭐ Điểm lượt này: <b id="stat-score">0</b></p>
+            </div>
+            <button id="modal-btn" class="btn-action">Tiếp tục</button>
+        </div>
+    </div>
+
+    <script>
+        const Game = {
+            data: {
+                1: {
+                    title: "LƯỢT 1: VÒNG ĐỜI CỦA ẾCH 🐸",
+                    guide: "Kéo thẻ từ vựng Tiếng Anh vào đúng vị trí trên hình.",
+                    bg: "frog.jpg",
+                    items: [
+                        { id: "i-frog", text: "Frog", type: "txt" },
+                        { id: "i-eggs", text: "Eggs", type: "txt" },
+                        { id: "i-tadpole", text: "Tadpole", type: "txt" },
+                        { id: "i-legs", text: "Tadpole w/ legs", type: "txt" },
+                        { id: "i-froglet", text: "Froglet", type: "txt" }
+                    ],
+                    zones: [
+                        { match: "i-frog", id: "dz-frog", class: "z-frog" },
+                        { match: "i-eggs", id: "dz-eggs", class: "z-frog" },
+                        { match: "i-tadpole", id: "dz-tadpole", class: "z-frog" },
+                        { match: "i-legs", id: "dz-legs", class: "z-frog" },
+                        { match: "i-froglet", id: "dz-froglet", class: "z-frog" }
+                    ]
+                },
+                2: {
+                    title: "LƯỢT 2: VÒNG ĐỜI CỦA CHIM 🐦",
+                    guide: "Kéo HÌNH và CHỮ vào đúng vị trí. (Riêng Trứng chỉ cần kéo chữ)",
+                    bg: "birb_bg.jpg", 
+                    items: [
+                        // Thẻ Chữ
+                        { id: "t-bird", text: "Bird", type: "txt" }, 
+                        { id: "t-egg", text: "Egg", type: "txt" },
+                        { id: "t-hatch", text: "Hatchling", type: "txt" }, 
+                        { id: "t-chick", text: "Chick", type: "txt" },
+                        // Thẻ Hình (BỎ HÌNH TRỨNG)
+                        { id: "p-bird", img: "bird", type: "img" },      
+                        { id: "p-hatch", img: "hatchling", type: "img" }, 
+                        { id: "p-chick", img: "chick", type: "img" }
+                    ],
+                    zones: [
+                        // Ô thả Chữ
+                        { match: "t-bird", id: "dz-t-bird", class: "z-bird-txt" }, { match: "t-egg", id: "dz-t-egg", class: "z-bird-txt" },
+                        { match: "t-hatch", id: "dz-t-hatch", class: "z-bird-txt" }, { match: "t-chick", id: "dz-t-chick", class: "z-bird-txt" },
+                        // Ô thả Hình (BỎ Ô TRỨNG)
+                        { match: "p-bird", id: "dz-i-bird", class: "z-bird-img" }, 
+                        { match: "p-hatch", id: "dz-i-hatch", class: "z-bird-img" }, { match: "p-chick", id: "dz-i-chick", class: "z-bird-img" }
+                    ]
+                }
+            },
+            
+            state: { lv: 1, score: 0, tempScore: 0, correct: 0, timer: null, time: 30 },
+
+            start: function() {
+                const name = document.getElementById('inp-name').value.trim();
+                if(!name) { alert("Nhập tên trước nhé!"); return; }
+                document.getElementById('ui-player').innerText = name;
+                document.getElementById('screen-start').classList.remove('active');
+                document.getElementById('screen-game').classList.add('active');
+                this.loadLevel(1);
+            },
+
+            loadLevel: function(lv) {
+                this.state.lv = lv;
+                this.state.time = 30;
+                this.state.correct = 0;
+                this.state.tempScore = 0;
+                
+                const d = this.data[lv];
+                document.getElementById('ui-title').innerText = d.title;
+                document.getElementById('ui-guide').innerText = d.guide;
+                document.getElementById('game-bg').src = d.bg;
+                document.getElementById('ui-timer').innerText = 30;
+                document.getElementById('ui-timer').style.color = "var(--warning)";
+
+                const zArea = document.getElementById('zones-area');
+                zArea.innerHTML = "";
+                d.zones.forEach(z => {
+                    const div = document.createElement('div');
+                    div.className = `drop-zone ${z.class}`;
+                    div.id = z.id;
+                    div.setAttribute('data-target', z.match);
+                    div.innerHTML = "<span>?</span>";
+                    
+                    div.addEventListener('dragover', e => { e.preventDefault(); div.classList.add('hover'); });
+                    div.addEventListener('dragleave', () => div.classList.remove('hover'));
+                    div.addEventListener('drop', this.handleDrop);
+                    zArea.appendChild(div);
+                });
+
+                const dock = document.getElementById('dock');
+                dock.innerHTML = "";
+                const items = [...d.items].sort(() => Math.random() - 0.5);
+                
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.id = item.id;
+                    div.draggable = true;
+                    if(item.type === 'txt') {
+                        div.className = "draggable";
+                        div.innerText = item.text;
+                    } else {
+                        div.className = "draggable img-card";
+                        div.innerHTML = `<img src="${item.img}.png" onerror="this.src='${item.img}.jpg'" draggable="false">`; 
+                    }
+                    div.addEventListener('dragstart', e => {
+                        e.dataTransfer.setData('text', item.id);
+                        setTimeout(() => div.style.opacity = 0.5, 0);
+                    });
+                    div.addEventListener('dragend', () => div.style.opacity = 1);
+                    dock.appendChild(div);
+                });
+
+                clearInterval(this.state.timer);
+                this.state.timer = setInterval(() => {
+                    this.state.time--;
+                    const timerEl = document.getElementById('ui-timer');
+                    timerEl.innerText = this.state.time;
+                    if(this.state.time <= 10) timerEl.style.color = "var(--danger)";
+                    if(this.state.time <= 0) this.endLevel(false);
+                }, 1000);
+            },
+
+            handleDrop: function(e) {
+                e.preventDefault();
+                const zone = e.currentTarget;
+                zone.classList.remove('hover');
+                if(zone.classList.contains('correct')) return;
+
+                const itemId = e.dataTransfer.getData('text');
+                const targetId = zone.getAttribute('data-target');
+                const itemEl = document.getElementById(itemId);
+
+                if(!itemEl) return;
+
+                if(itemId === targetId) {
+                    zone.classList.add('correct');
+                    if(itemEl.classList.contains('img-card')) {
+                        zone.innerHTML = itemEl.innerHTML;
+                    } else {
+                        zone.innerText = itemEl.innerText;
+                    }
+                    itemEl.style.display = 'none';
+                    Game.state.tempScore += 10;
+                    Game.state.correct++;
+                    Game.updateScore();
+
+                    if(Game.state.correct === Game.data[Game.state.lv].items.length) {
+                        setTimeout(() => Game.endLevel(true), 500);
+                    }
+                } else {
+                    zone.style.borderColor = "var(--danger)";
+                    zone.style.animation = "shake 0.3s";
+                    setTimeout(() => {
+                        zone.style.borderColor = "";
+                        zone.style.animation = "";
+                    }, 300);
+                }
+            },
+
+            updateScore: function() {
+                document.getElementById('ui-score').innerText = Game.state.score + Game.state.tempScore;
+            },
+
+            endLevel: function(win) {
+                clearInterval(this.state.timer);
+                const modal = document.getElementById('modal');
+                const title = document.getElementById('modal-title');
+                const msg = document.getElementById('modal-msg');
+                const btn = document.getElementById('modal-btn');
+                const statBox = document.getElementById('stat-box-container');
+
+                modal.style.display = 'flex';
+                document.getElementById('stat-correct').innerText = `${this.state.correct} / ${this.data[this.state.lv].items.length}`;
+                document.getElementById('stat-score').innerText = this.state.tempScore;
+
+                if(win) {
+                    title.innerText = "🎉 XUẤT SẮC!";
+                    title.style.color = "var(--success)";
+                    statBox.style.borderColor = "var(--success)";
+                    
+                    if(this.state.lv === 1) {
+                        msg.innerText = "Em đã hoàn thành Lượt 1. Sẵn sàng sang Lượt 2 chưa?";
+                        btn.innerText = "Sang Lượt 2 ➡";
+                        btn.style.background = "var(--primary)";
+                        btn.onclick = () => {
+                            Game.state.score += Game.state.tempScore;
+                            modal.style.display = 'none';
+                            Game.loadLevel(2);
+                        }
+                    } else {
+                        msg.innerText = "CHÚC MỪNG! EM ĐÃ CHIẾN THẮNG TRÒ CHƠI! 🏆";
+                        btn.innerText = "Chơi lại từ đầu 🔄";
+                        btn.style.background = "var(--success)";
+                        btn.onclick = () => location.reload();
+                    }
+                } else {
+                    title.innerText = "⌛ HẾT GIỜ RỒI!";
+                    title.style.color = "var(--danger)";
+                    statBox.style.borderColor = "var(--danger)";
+                    msg.innerText = "Tiếc quá, hãy thử lại lượt này nhé!";
+                    btn.innerText = "Làm lại lượt này ↩";
+                    btn.style.background = "var(--warning)";
+                    btn.onclick = () => {
+                        modal.style.display = 'none';
+                        Game.loadLevel(Game.state.lv);
+                        document.getElementById('ui-score').innerText = Game.state.score;
+                    }
+                }
+            }
+        };
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shake {
+                0% { transform: translateX(0); } 25% { transform: translateX(-5px); }
+                50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+    </script>
+</body>
+</html> 
