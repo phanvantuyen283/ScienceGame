@@ -67,7 +67,7 @@
         }
         .drop-zone.hover { background: #E3F2FD; transform: scale(1.05); border-color: var(--primary); color: var(--primary); }
         .drop-zone.correct { background: transparent; border: 3px solid var(--success); box-shadow: none; }
-        .drop-zone.correct span { display: none; } /* Hide placeholder text when correct */
+        .drop-zone.correct span { display: none; }
         .drop-zone.correct img { animation: popIn 0.5s; }
 
         /* DOCK */
@@ -100,8 +100,7 @@
         @keyframes popIn { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
         .stat-box { background:#F8F9FA; padding:15px; margin:25px 0; border-radius:15px; text-align:left; border-left: 5px solid; }
 
-        /* --- COORDINATES (VỊ TRÍ) --- */
-        
+        /* --- TỌA ĐỘ VỊ TRÍ --- */
         /* LEVEL 1: FROG */
         .z-frog { width: 120px; height: 40px; }
         #dz-frog { top: 20%; left: 42%; }
@@ -114,9 +113,7 @@
         .z-bird-txt { width: 110px; height: 35px; background: rgba(255,255,255,0.95); border-color: var(--primary); color: var(--primary); }
         .z-bird-img { width: 90px; height: 90px; border-radius: 50%; border-color: var(--warning); background: rgba(255,255,255,0.8); color: var(--warning); }
         
-        /* FIX: Đẩy ô chữ Egg xuống thấp hơn (33%) để không đè lên hình ổ trứng 
-        */
-        #dz-t-egg { top: 33%; left: 44%; } 
+        #dz-t-egg { top: 40%; left: 44%; } /* Egg Word pushed down */
         
         #dz-i-hatch { top: 33%; left: 73%; } #dz-t-hatch { top: 51%; left: 71%; }
         #dz-i-chick { top: 62%; left: 45%; } #dz-t-chick { top: 80%; left: 44%; }
@@ -206,16 +203,14 @@
                         { id: "t-hatch", text: "Hatchling", type: "txt" }, 
                         { id: "t-chick", text: "Chick", type: "txt" },
                         
-                        // FIX: Tên file ảnh chim lớn là 'birb_adult' (khớp với file thầy có)
+                        // FIX: Tên file là 'birb_adult' (khớp với file thầy có)
                         { id: "p-bird", img: "birb_adult", type: "img" },      
                         { id: "p-hatch", img: "hatchling", type: "img" }, 
                         { id: "p-chick", img: "chick", type: "img" }
                     ],
                     zones: [
-                        // Word Zones
                         { match: "t-bird", id: "dz-t-bird", class: "z-bird-txt" }, { match: "t-egg", id: "dz-t-egg", class: "z-bird-txt" },
                         { match: "t-hatch", id: "dz-t-hatch", class: "z-bird-txt" }, { match: "t-chick", id: "dz-t-chick", class: "z-bird-txt" },
-                        // Image Zones
                         { match: "p-bird", id: "dz-i-bird", class: "z-bird-img" }, 
                         { match: "p-hatch", id: "dz-i-hatch", class: "z-bird-img" }, { match: "p-chick", id: "dz-i-chick", class: "z-bird-img" }
                     ]
@@ -255,9 +250,9 @@
                     div.id = z.id;
                     div.setAttribute('data-target', z.match);
                     
-                    // FIX: Thêm chữ "Drop Picture Here" mờ cho các ô thả ảnh
+                    // Thêm chữ gợi ý Drop Picture Here đậm hơn
                     if(z.class.includes('z-bird-img')) {
-                         div.innerHTML = `<span style="font-size: 10px; color: #bbb; text-align: center; line-height: 1.2;">Drop<br>Picture<br>Here</span>`;
+                         div.innerHTML = `<span style="font-size: 11px; color: #888; text-align: center; line-height: 1.2; font-weight: normal;">Drop<br>Picture<br>Here</span>`;
                     } else {
                          div.innerHTML = "<span>?</span>";
                     }
