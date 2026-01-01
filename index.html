@@ -67,7 +67,6 @@
         }
         .drop-zone.hover { background: #E3F2FD; transform: scale(1.05); border-color: var(--primary); color: var(--primary); }
         
-        /* FIX QUAN TRỌNG: Khi đúng, nền phải trong suốt (transparent) !important để không che ảnh dưới */
         .drop-zone.correct { 
             background: transparent !important; 
             border: 3px solid var(--success); 
@@ -178,6 +177,53 @@
     </div>
 
     <script>
+        // --- SOUND & SPEECH MANAGER ---
+        const AudioSys = {
+            ctx: null,
+            init: function() {
+                try {
+                    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                } catch(e) { console.log('Audio API not supported'); }
+            },
+            
+            // Tạo âm thanh điện tử (Beep)
+            playTone: function(freq, type, duration) {
+                if (!this.ctx) this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + duration);
+            },
+
+            playCorrect: function() {
+                // Âm thanh "Ting Ting" (High pitch sine wave)
+                this.playTone(600, 'sine', 0.1);
+                setTimeout(() => this.playTone(800, 'sine', 0.2), 150);
+            },
+
+            playWrong: function() {
+                // Âm thanh "Èuu" (Low pitch sawtooth)
+                this.playTone(150, 'sawtooth', 0.3);
+            },
+
+            // Đọc văn bản (Text to Speech)
+            speak: function(text) {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel(); // Dừng câu đang đọc dở
+                    const utter = new SpeechSynthesisUtterance(text);
+                    utter.lang = 'en-US'; // Giọng Mỹ
+                    utter.rate = 0.9; // Tốc độ vừa phải
+                    window.speechSynthesis.speak(utter);
+                }
+            }
+        };
+
         const Game = {
             data: {
                 1: {
@@ -208,10 +254,9 @@
                         { id: "t-egg", text: "Egg", type: "txt" },
                         { id: "t-hatch", text: "Hatchling", type: "txt" }, 
                         { id: "t-chick", text: "Chick", type: "txt" },
-                        
-                        { id: "p-bird", img: "birb_adult", type: "img" },      
-                        { id: "p-hatch", img: "hatchling", type: "img" }, 
-                        { id: "p-chick", img: "chick", type: "img" }
+                        { id: "p-bird", img: "birb_adult", type: "img", label: "Bird" }, // Label for speech
+                        { id: "p-hatch", img: "hatchling", type: "img", label: "Hatchling" }, 
+                        { id: "p-chick", img: "chick", type: "img", label: "Chick" }
                     ],
                     zones: [
                         { match: "t-bird", id: "dz-t-bird", class: "z-bird-txt" }, { match: "t-egg", id: "dz-t-egg", class: "z-bird-txt" },
@@ -227,6 +272,11 @@
             start: function() {
                 const name = document.getElementById('inp-name').value.trim();
                 if(!name) { alert("Please enter your name first!"); return; }
+                
+                // Khởi tạo âm thanh (cần tương tác người dùng để bật)
+                AudioSys.init();
+                AudioSys.speak("Welcome " + name);
+
                 document.getElementById('ui-player').innerText = name;
                 document.getElementById('screen-start').classList.remove('active');
                 document.getElementById('screen-game').classList.add('active');
@@ -275,6 +325,10 @@
                     const div = document.createElement('div');
                     div.id = item.id;
                     div.draggable = true;
+                    
+                    // Xác định từ cần đọc
+                    const speechText = item.type === 'txt' ? item.text : (item.label || "Picture");
+
                     if(item.type === 'txt') {
                         div.className = "draggable";
                         div.innerText = item.text;
@@ -282,10 +336,19 @@
                         div.className = "draggable img-card";
                         div.innerHTML = `<img src="${item.img}.png" onerror="this.src='${item.img}.jpg'" draggable="false">`; 
                     }
+                    
+                    // Event: Kéo thì đọc tên
                     div.addEventListener('dragstart', e => {
+                        AudioSys.speak(speechText); // ĐỌC TÊN
                         e.dataTransfer.setData('text', item.id);
                         setTimeout(() => div.style.opacity = 0.5, 0);
                     });
+                    
+                    // Event: Click vào cũng đọc tên
+                    div.addEventListener('mousedown', () => {
+                        AudioSys.speak(speechText);
+                    });
+
                     div.addEventListener('dragend', () => div.style.opacity = 1);
                     dock.appendChild(div);
                 });
@@ -313,6 +376,12 @@
                 if(!itemEl) return;
 
                 if(itemId === targetId) {
+                    // --- ĐÚNG ---
+                    AudioSys.playCorrect(); // Âm thanh TING
+                    // Ngẫu nhiên lời khen
+                    const praises = ["Correct!", "Good job!", "Excellent!", "Well done!"];
+                    AudioSys.speak(praises[Math.floor(Math.random() * praises.length)]);
+
                     zone.classList.add('correct');
                     if(itemEl.classList.contains('img-card')) {
                         zone.innerHTML = itemEl.innerHTML;
@@ -328,6 +397,10 @@
                         setTimeout(() => Game.endLevel(true), 500);
                     }
                 } else {
+                    // --- SAI ---
+                    AudioSys.playWrong(); // Âm thanh ÈUU
+                    AudioSys.speak("Try again!");
+                    
                     zone.style.borderColor = "var(--danger)";
                     zone.style.animation = "shake 0.3s";
                     setTimeout(() => {
@@ -354,6 +427,7 @@
                 document.getElementById('stat-score').innerText = this.state.tempScore;
 
                 if(win) {
+                    AudioSys.playCorrect();
                     title.innerText = "🎉 EXCELLENT!";
                     title.style.color = "var(--success)";
                     statBox.style.borderColor = "var(--success)";
@@ -368,12 +442,14 @@
                             Game.loadLevel(2);
                         }
                     } else {
+                        AudioSys.speak("Congratulations! You won!");
                         msg.innerText = "CONGRATULATIONS! YOU WON THE GAME! 🏆";
                         btn.innerText = "Play Again 🔄";
                         btn.style.background = "var(--success)";
                         btn.onclick = () => location.reload();
                     }
                 } else {
+                    AudioSys.playWrong();
                     title.innerText = "⌛ TIME'S UP!";
                     title.style.color = "var(--danger)";
                     statBox.style.borderColor = "var(--danger)";
