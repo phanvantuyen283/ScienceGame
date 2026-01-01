@@ -8,6 +8,7 @@
         :root {
             --primary: #4A90E2; --success: #2ECC71; --warning: #F1C40F; --danger: #E74C3C;
             --dark: #2C3E50; --board-w: 800px; --board-h: 600px;
+            --brand: #E91E63; /* Màu thương hiệu cho tên cô giáo */
         }
 
         body {
@@ -25,10 +26,20 @@
             background: white; padding: 50px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             display: inline-block; margin-top: 60px; width: 550px; border-top: 5px solid var(--primary);
         }
+        .start-card h1 { margin-bottom: 10px; color: var(--dark); }
+        .start-card p { margin-bottom: 30px; color: #7f8c8d; font-size: 1.2em; }
+
         input[type="text"] {
             padding: 15px 20px; font-size: 18px; border-radius: 50px; border: 2px solid #E0E0E0; width: 80%;
-            margin: 25px 0; outline: none; text-align: center;
+            margin-bottom: 15px; outline: none; text-align: center; /* Giảm margin bottom để chèn tên cô */
         }
+        
+        /* BRANDING TEXT STYLE */
+        .brand-text {
+            color: var(--brand); font-weight: bold; font-size: 1.2em; margin-bottom: 25px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
         .btn-action {
             padding: 15px 45px; border: none; border-radius: 50px; font-size: 20px; font-weight: bold;
             cursor: pointer; color: white; background: var(--primary); transition: all 0.2s;
@@ -103,20 +114,11 @@
         .z-bird-txt { width: 110px; height: 35px; background: rgba(255,255,255,0.95); border-color: var(--primary); color: var(--primary); }
         .z-bird-img { width: 90px; height: 90px; border-radius: 50%; border-color: var(--warning); background: rgba(255,255,255,0.8); color: var(--warning); }
         
-        /* Egg (Chỉ có ô chữ) */
-        #dz-t-egg { top: 28%; left: 44%; } 
+        #dz-t-egg { top: 28%; left: 44%; } /* Egg Word */
         
-        /* Hatchling (Hình + Chữ) */
-        #dz-i-hatch { top: 33%; left: 73%; }
-        #dz-t-hatch { top: 51%; left: 71%; }
-        
-        /* Chick (Hình + Chữ) */
-        #dz-i-chick { top: 62%; left: 45%; }
-        #dz-t-chick { top: 80%; left: 44%; }
-        
-        /* Bird (Hình + Chữ) */
-        #dz-i-bird { top: 33%; left: 15%; }
-        #dz-t-bird { top: 51%; left: 14%; }
+        #dz-i-hatch { top: 33%; left: 73%; } #dz-t-hatch { top: 51%; left: 71%; } /* Hatchling */
+        #dz-i-chick { top: 62%; left: 45%; } #dz-t-chick { top: 80%; left: 44%; } /* Chick */
+        #dz-i-bird { top: 33%; left: 15%; } #dz-t-bird { top: 51%; left: 14%; } /* Bird */
 
     </style>
 </head>
@@ -128,6 +130,11 @@
                 <h1>🧬 SCIENCE EXPLORER</h1>
                 <p>Discover Animal Life Cycles</p>
                 <input type="text" id="inp-name" placeholder="Enter your name..." autocomplete="off">
+                
+                <div class="brand-text">
+                    👩‍🏫 Teacher: Mrs. Hoang Hien
+                </div>
+
                 <button class="btn-action" onclick="Game.start()">START GAME ▶</button>
             </div>
         </div>
@@ -137,7 +144,7 @@
         <div class="container">
             <div class="hud">
                 <div>👤 <span id="ui-player" style="color: var(--primary)">Student</span></div>
-                <div>⏳ <span id="ui-timer" style="color: var(--warning)">60</span>s</div>
+                <div>⏳ <span id="ui-timer" style="color: var(--warning)">90</span>s</div>
                 <div>⭐ Score: <span id="ui-score" style="color: var(--success)">0</span></div>
             </div>
             
@@ -189,32 +196,28 @@
                 },
                 2: {
                     title: "LEVEL 2: BIRD LIFE CYCLE 🐦",
-                    guide: "Drag both PICTURES and WORDS to correct spots. (Words only for Egg)",
+                    guide: "Drag PICTURES and WORDS to correct spots. (Words only for Egg)",
                     bg: "birb_bg.jpg", 
                     items: [
-                        // Word Cards
                         { id: "t-bird", text: "Bird", type: "txt" }, 
                         { id: "t-egg", text: "Egg", type: "txt" },
                         { id: "t-hatch", text: "Hatchling", type: "txt" }, 
                         { id: "t-chick", text: "Chick", type: "txt" },
-                        // Image Cards
                         { id: "p-bird", img: "bird", type: "img" },      
                         { id: "p-hatch", img: "hatchling", type: "img" }, 
                         { id: "p-chick", img: "chick", type: "img" }
                     ],
                     zones: [
-                        // Word Zones
                         { match: "t-bird", id: "dz-t-bird", class: "z-bird-txt" }, { match: "t-egg", id: "dz-t-egg", class: "z-bird-txt" },
                         { match: "t-hatch", id: "dz-t-hatch", class: "z-bird-txt" }, { match: "t-chick", id: "dz-t-chick", class: "z-bird-txt" },
-                        // Image Zones
                         { match: "p-bird", id: "dz-i-bird", class: "z-bird-img" }, 
                         { match: "p-hatch", id: "dz-i-hatch", class: "z-bird-img" }, { match: "p-chick", id: "dz-i-chick", class: "z-bird-img" }
                     ]
                 }
             },
             
-            // Set time to 60 seconds here
-            state: { lv: 1, score: 0, tempScore: 0, correct: 0, timer: null, time: 60 },
+            // TIME SETTING: 90 SECONDS
+            state: { lv: 1, score: 0, tempScore: 0, correct: 0, timer: null, time: 90 },
 
             start: function() {
                 const name = document.getElementById('inp-name').value.trim();
@@ -227,7 +230,7 @@
 
             loadLevel: function(lv) {
                 this.state.lv = lv;
-                this.state.time = 60; // Set timer to 60s
+                this.state.time = 90; // Set timer to 90s
                 this.state.correct = 0;
                 this.state.tempScore = 0;
                 
@@ -235,7 +238,7 @@
                 document.getElementById('ui-title').innerText = d.title;
                 document.getElementById('ui-guide').innerText = d.guide;
                 document.getElementById('game-bg').src = d.bg;
-                document.getElementById('ui-timer').innerText = 60; // Update UI
+                document.getElementById('ui-timer').innerText = 90; 
                 document.getElementById('ui-timer').style.color = "var(--warning)";
 
                 const zArea = document.getElementById('zones-area');
