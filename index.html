@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -104,7 +104,7 @@
         .z-bird-img { width: 90px; height: 90px; border-radius: 50%; border-color: var(--warning); background: rgba(255,255,255,0.8); color: var(--warning); }
         
         /* Egg (Chỉ có ô chữ) */
-        #dz-t-egg { top: 28%; left: 44%; } /* Vị trí chữ Egg dưới hình trứng */
+        #dz-t-egg { top: 28%; left: 44%; } 
         
         /* Hatchling (Hình + Chữ) */
         #dz-i-hatch { top: 33%; left: 73%; }
@@ -125,10 +125,10 @@
     <div id="screen-start" class="screen active">
         <div class="container">
             <div class="start-card">
-                <h1>🧬 KHÁM PHÁ SINH HỌC</h1>
-                <p>Trò chơi tìm hiểu vòng đời động vật</p>
-                <input type="text" id="inp-name" placeholder="Nhập tên của em..." autocomplete="off">
-                <button class="btn-action" onclick="Game.start()">BẮT ĐẦU NGAY ▶</button>
+                <h1>🧬 SCIENCE EXPLORER</h1>
+                <p>Discover Animal Life Cycles</p>
+                <input type="text" id="inp-name" placeholder="Enter your name..." autocomplete="off">
+                <button class="btn-action" onclick="Game.start()">START GAME ▶</button>
             </div>
         </div>
     </div>
@@ -136,13 +136,13 @@
     <div id="screen-game" class="screen">
         <div class="container">
             <div class="hud">
-                <div>👤 <span id="ui-player" style="color: var(--primary)">Học sinh</span></div>
-                <div>⏳ <span id="ui-timer" style="color: var(--warning)">30</span>s</div>
-                <div>⭐ <span id="ui-score" style="color: var(--success)">0</span> điểm</div>
+                <div>👤 <span id="ui-player" style="color: var(--primary)">Student</span></div>
+                <div>⏳ <span id="ui-timer" style="color: var(--warning)">60</span>s</div>
+                <div>⭐ Score: <span id="ui-score" style="color: var(--success)">0</span></div>
             </div>
             
             <h2 id="ui-title" style="margin: 0 0 5px 0; color: var(--dark)">Level Title</h2>
-            <p id="ui-guide" style="margin: 0 0 20px 0; color: #666">Hướng dẫn chơi</p>
+            <p id="ui-guide" style="margin: 0 0 20px 0; color: #666">Instructions</p>
 
             <div class="game-board-wrapper">
                 <img id="game-bg" class="game-bg" src="" alt="Background">
@@ -155,13 +155,13 @@
 
     <div id="modal" class="modal-overlay">
         <div class="modal-box">
-            <h2 id="modal-title">Kết quả</h2>
+            <h2 id="modal-title">Result</h2>
             <p id="modal-msg">...</p>
             <div id="stat-box-container" class="stat-box">
-                <p>✅ Số câu đúng: <b id="stat-correct">0</b></p>
-                <p>⭐ Điểm lượt này: <b id="stat-score">0</b></p>
+                <p>✅ Correct: <b id="stat-correct">0</b></p>
+                <p>⭐ Score: <b id="stat-score">0</b></p>
             </div>
-            <button id="modal-btn" class="btn-action">Tiếp tục</button>
+            <button id="modal-btn" class="btn-action">Continue</button>
         </div>
     </div>
 
@@ -169,8 +169,8 @@
         const Game = {
             data: {
                 1: {
-                    title: "LƯỢT 1: VÒNG ĐỜI CỦA ẾCH 🐸",
-                    guide: "Kéo thẻ từ vựng Tiếng Anh vào đúng vị trí trên hình.",
+                    title: "LEVEL 1: FROG LIFE CYCLE 🐸",
+                    guide: "Drag the English words to the correct spots.",
                     bg: "frog.jpg",
                     items: [
                         { id: "i-frog", text: "Frog", type: "txt" },
@@ -188,36 +188,37 @@
                     ]
                 },
                 2: {
-                    title: "LƯỢT 2: VÒNG ĐỜI CỦA CHIM 🐦",
-                    guide: "Kéo HÌNH và CHỮ vào đúng vị trí. (Riêng Trứng chỉ cần kéo chữ)",
+                    title: "LEVEL 2: BIRD LIFE CYCLE 🐦",
+                    guide: "Drag both PICTURES and WORDS to correct spots. (Words only for Egg)",
                     bg: "birb_bg.jpg", 
                     items: [
-                        // Thẻ Chữ
+                        // Word Cards
                         { id: "t-bird", text: "Bird", type: "txt" }, 
                         { id: "t-egg", text: "Egg", type: "txt" },
                         { id: "t-hatch", text: "Hatchling", type: "txt" }, 
                         { id: "t-chick", text: "Chick", type: "txt" },
-                        // Thẻ Hình (BỎ HÌNH TRỨNG)
+                        // Image Cards
                         { id: "p-bird", img: "bird", type: "img" },      
                         { id: "p-hatch", img: "hatchling", type: "img" }, 
                         { id: "p-chick", img: "chick", type: "img" }
                     ],
                     zones: [
-                        // Ô thả Chữ
+                        // Word Zones
                         { match: "t-bird", id: "dz-t-bird", class: "z-bird-txt" }, { match: "t-egg", id: "dz-t-egg", class: "z-bird-txt" },
                         { match: "t-hatch", id: "dz-t-hatch", class: "z-bird-txt" }, { match: "t-chick", id: "dz-t-chick", class: "z-bird-txt" },
-                        // Ô thả Hình (BỎ Ô TRỨNG)
+                        // Image Zones
                         { match: "p-bird", id: "dz-i-bird", class: "z-bird-img" }, 
                         { match: "p-hatch", id: "dz-i-hatch", class: "z-bird-img" }, { match: "p-chick", id: "dz-i-chick", class: "z-bird-img" }
                     ]
                 }
             },
             
-            state: { lv: 1, score: 0, tempScore: 0, correct: 0, timer: null, time: 30 },
+            // Set time to 60 seconds here
+            state: { lv: 1, score: 0, tempScore: 0, correct: 0, timer: null, time: 60 },
 
             start: function() {
                 const name = document.getElementById('inp-name').value.trim();
-                if(!name) { alert("Nhập tên trước nhé!"); return; }
+                if(!name) { alert("Please enter your name first!"); return; }
                 document.getElementById('ui-player').innerText = name;
                 document.getElementById('screen-start').classList.remove('active');
                 document.getElementById('screen-game').classList.add('active');
@@ -226,7 +227,7 @@
 
             loadLevel: function(lv) {
                 this.state.lv = lv;
-                this.state.time = 30;
+                this.state.time = 60; // Set timer to 60s
                 this.state.correct = 0;
                 this.state.tempScore = 0;
                 
@@ -234,7 +235,7 @@
                 document.getElementById('ui-title').innerText = d.title;
                 document.getElementById('ui-guide').innerText = d.guide;
                 document.getElementById('game-bg').src = d.bg;
-                document.getElementById('ui-timer').innerText = 30;
+                document.getElementById('ui-timer').innerText = 60; // Update UI
                 document.getElementById('ui-timer').style.color = "var(--warning)";
 
                 const zArea = document.getElementById('zones-area');
@@ -339,13 +340,13 @@
                 document.getElementById('stat-score').innerText = this.state.tempScore;
 
                 if(win) {
-                    title.innerText = "🎉 XUẤT SẮC!";
+                    title.innerText = "🎉 EXCELLENT!";
                     title.style.color = "var(--success)";
                     statBox.style.borderColor = "var(--success)";
                     
                     if(this.state.lv === 1) {
-                        msg.innerText = "Em đã hoàn thành Lượt 1. Sẵn sàng sang Lượt 2 chưa?";
-                        btn.innerText = "Sang Lượt 2 ➡";
+                        msg.innerText = "You completed Level 1. Ready for Level 2?";
+                        btn.innerText = "Go to Level 2 ➡";
                         btn.style.background = "var(--primary)";
                         btn.onclick = () => {
                             Game.state.score += Game.state.tempScore;
@@ -353,17 +354,17 @@
                             Game.loadLevel(2);
                         }
                     } else {
-                        msg.innerText = "CHÚC MỪNG! EM ĐÃ CHIẾN THẮNG TRÒ CHƠI! 🏆";
-                        btn.innerText = "Chơi lại từ đầu 🔄";
+                        msg.innerText = "CONGRATULATIONS! YOU WON THE GAME! 🏆";
+                        btn.innerText = "Play Again 🔄";
                         btn.style.background = "var(--success)";
                         btn.onclick = () => location.reload();
                     }
                 } else {
-                    title.innerText = "⌛ HẾT GIỜ RỒI!";
+                    title.innerText = "⌛ TIME'S UP!";
                     title.style.color = "var(--danger)";
                     statBox.style.borderColor = "var(--danger)";
-                    msg.innerText = "Tiếc quá, hãy thử lại lượt này nhé!";
-                    btn.innerText = "Làm lại lượt này ↩";
+                    msg.innerText = "Oh no! Time ran out. Let's try this level again!";
+                    btn.innerText = "Retry Level ↩";
                     btn.style.background = "var(--warning)";
                     btn.onclick = () => {
                         modal.style.display = 'none';
@@ -385,4 +386,4 @@
 
     </script>
 </body>
-</html> 
+</html>
