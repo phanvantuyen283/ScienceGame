@@ -62,13 +62,29 @@
         /* DROP ZONES */
         .drop-zone {
             position: absolute; display: flex; justify-content: center; align-items: center;
-            background: rgba(255, 255, 255, 0.95); border: 3px dashed #BDBDBD; border-radius: 12px;
-            font-size: 24px; color: #BDBDBD; font-weight: 900; z-index: 10; transition: 0.3s;
+            border: 3px dashed #BDBDBD; border-radius: 12px;
+            font-size: 24px; color: #BDBDBD; font-weight: 900; transition: 0.3s;
         }
         .drop-zone.hover { background: #E3F2FD; transform: scale(1.05); border-color: var(--primary); color: var(--primary); }
         .drop-zone.correct { background: transparent; border: 3px solid var(--success); box-shadow: none; }
-        .drop-zone.correct span { display: none; }
+        .drop-zone.correct span { display: none; } 
         .drop-zone.correct img { animation: popIn 0.5s; }
+
+        /* CSS RIÊNG CHO TỪNG LOẠI Ô ĐỂ XỬ LÝ LỚP (LAYER) */
+        
+        /* Ô ẢNH (Nằm dưới) */
+        .z-bird-img {
+            z-index: 10; /* Lớp thấp hơn */
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Ô CHỮ (Nằm trên ảnh) */
+        .z-bird-txt {
+            z-index: 20; /* Lớp cao hơn để luôn nổi lên trên ảnh */
+            background: rgba(255, 255, 255, 0.85); /* Trắng mờ để dễ đọc chữ */
+            border-color: var(--primary);
+            color: var(--primary);
+        }
 
         /* DOCK */
         .dock {
@@ -102,7 +118,7 @@
 
         /* --- TỌA ĐỘ VỊ TRÍ --- */
         /* LEVEL 1: FROG */
-        .z-frog { width: 120px; height: 40px; }
+        .z-frog { width: 120px; height: 40px; z-index: 10; background: rgba(255,255,255,0.95); }
         #dz-frog { top: 20%; left: 42%; }
         #dz-eggs { top: 49%; left: 78%; }
         #dz-tadpole { top: 78%; left: 68%; }
@@ -110,14 +126,25 @@
         #dz-froglet { top: 49%; left: 3%; }
 
         /* LEVEL 2: BIRD */
-        .z-bird-txt { width: 110px; height: 35px; background: rgba(255,255,255,0.95); border-color: var(--primary); color: var(--primary); }
-        .z-bird-img { width: 90px; height: 90px; border-radius: 50%; border-color: var(--warning); background: rgba(255,255,255,0.8); color: var(--warning); }
+        .z-bird-txt { width: 110px; height: 35px; }
+        .z-bird-img { width: 90px; height: 90px; border-radius: 50%; border-color: var(--warning); color: var(--warning); }
         
-        #dz-t-egg { top: 40%; left: 44%; } /* Egg Word pushed down */
+        /* CHỈNH SỬA VỊ TRÍ THEO YÊU CẦU */
         
-        #dz-i-hatch { top: 33%; left: 73%; } #dz-t-hatch { top: 51%; left: 71%; }
-        #dz-i-chick { top: 62%; left: 45%; } #dz-t-chick { top: 80%; left: 44%; }
-        #dz-i-bird { top: 33%; left: 15%; } #dz-t-bird { top: 51%; left: 14%; }
+        /* 1. Trứng (Chỉ có chữ) - Đẩy xuống thấp không đè hình */
+        #dz-t-egg { top: 42%; left: 44%; } 
+        
+        /* 2. Chim non (Hatchling) */
+        #dz-i-hatch { top: 33%; left: 73%; } 
+        #dz-t-hatch { top: 51%; left: 71%; }
+        
+        /* 3. Chim choai (Chick) */
+        #dz-i-chick { top: 62%; left: 45%; } 
+        #dz-t-chick { top: 80%; left: 44%; }
+        
+        /* 4. CHIM LỚN (BIRD) - QUAN TRỌNG: Ô chữ đè lên ô ảnh */
+        #dz-i-bird { top: 33%; left: 15%; } /* Ô ảnh nằm dưới */
+        #dz-t-bird { top: 42%; left: 14%; } /* Ô chữ nằm đè lên phần dưới của ô ảnh */
 
     </style>
 </head>
@@ -203,7 +230,7 @@
                         { id: "t-hatch", text: "Hatchling", type: "txt" }, 
                         { id: "t-chick", text: "Chick", type: "txt" },
                         
-                        // FIX: Tên file là 'birb_adult' (khớp với file thầy có)
+                        // FIX: Tên file chính xác là 'birb_adult'
                         { id: "p-bird", img: "birb_adult", type: "img" },      
                         { id: "p-hatch", img: "hatchling", type: "img" }, 
                         { id: "p-chick", img: "chick", type: "img" }
@@ -250,7 +277,7 @@
                     div.id = z.id;
                     div.setAttribute('data-target', z.match);
                     
-                    // Thêm chữ gợi ý Drop Picture Here đậm hơn
+                    // Gợi ý thả ảnh
                     if(z.class.includes('z-bird-img')) {
                          div.innerHTML = `<span style="font-size: 11px; color: #888; text-align: center; line-height: 1.2; font-weight: normal;">Drop<br>Picture<br>Here</span>`;
                     } else {
@@ -276,7 +303,7 @@
                         div.innerText = item.text;
                     } else {
                         div.className = "draggable img-card";
-                        // Code sẽ tự tìm file birb_adult.png hoặc birb_adult.jpg
+                        // Tự động nhận diện .png hoặc .jpg
                         div.innerHTML = `<img src="${item.img}.png" onerror="this.src='${item.img}.jpg'" draggable="false">`; 
                     }
                     div.addEventListener('dragstart', e => {
