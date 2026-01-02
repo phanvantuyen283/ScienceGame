@@ -242,7 +242,7 @@
                         { id: "i-frog", text: "Frog", type: "txt" },
                         { id: "i-eggs", text: "Eggs", type: "txt" },
                         { id: "i-tadpole", text: "Tadpole", type: "txt" },
-                        { id: "i-legs", text: "Tadpole w/ legs", type: "txt" },
+                        { id: "i-legs", text: "Tadpole with legs", type: "txt" },
                         { id: "i-froglet", text: "Froglet", type: "txt" }
                     ],
                     zones: [
@@ -311,12 +311,12 @@
             },
 
             loadLevel: function(lv) {
-                this.state.lv = lv; this.state.time = 40; this.state.correct = 0; this.state.tempScore = 0;
+                this.state.lv = lv; this.state.time = 20; this.state.correct = 0; this.state.tempScore = 0;
                 const d = this.data[lv];
                 document.getElementById('ui-title').innerText = d.title;
                 document.getElementById('ui-guide').innerText = d.guide;
                 document.getElementById('game-bg').src = d.bg;
-                document.getElementById('ui-timer').innerText = 40; 
+                document.getElementById('ui-timer').innerText = 20; 
                 document.getElementById('ui-timer').style.color = "var(--warning)";
 
                 const zArea = document.getElementById('zones-area'); zArea.innerHTML = "";
