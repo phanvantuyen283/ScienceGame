@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Science Game: Life Cycles</title>
+    <title> Animal Life Cycles</title>
     <style>
         :root { --primary: #4A90E2; --success: #2ECC71; --warning: #F1C40F; --danger: #E74C3C; --dark: #2C3E50; --board-w: 800px; --board-h: 600px; --brand: #E91E63; }
         body { font-family: 'Segoe UI', sans-serif; background-color: #E3F2FD; margin: 0; display: flex; justify-content: center; min-height: 100vh; user-select: none; padding: 10px 0; overflow-x: hidden; }
@@ -44,7 +44,7 @@
 </head>
 <body>
     <div id="screen-start" class="screen active">
-        <div class="container"><div class="start-card"><h1>🧬 SCIENCE EXPLORER</h1><p>Discover Animal Life Cycles</p><input type="text" id="inp-name" placeholder="Enter your name..." autocomplete="off"><div class="brand-text">👩‍🏫 Teacher: Mrs. Hoang Hien</div><button class="btn-action" onclick="Game.start()">START GAME ▶</button></div></div>
+        <div class="container"><div class="start-card"><h1>🧬 SCIENCE EXPLORER</h1><p> Animal Life Cycles</p><input type="text" id="inp-name" placeholder="Enter your name..." autocomplete="off"><div class="brand-text">👩‍🏫 Teacher: Mr. Hien</div><button class="btn-action" onclick="Game.start()">START ▶</button></div></div>
     </div>
     <div id="screen-game" class="screen">
         <div class="container"><div class="hud"><div>👤 <span id="ui-player" style="color: var(--primary)">Student</span></div><div>⏳ <span id="ui-timer" style="color: var(--warning)">90</span>s</div><div>⭐ Score: <span id="ui-score" style="color: var(--success)">0</span></div></div><h2 id="ui-title" style="margin: 0 0 5px 0; color: var(--dark)">Level Title</h2><p id="ui-guide" style="margin: 0 0 10px 0; color: #666">Instructions</p><div class="game-wrapper-outer" id="game-scaler"><div class="game-board-wrapper" id="game-board"><img id="game-bg" class="game-bg" src="" alt="Background"><div id="zones-area"></div></div></div><div id="dock" class="dock"></div></div>
@@ -65,12 +65,12 @@
         const Game = {
             data: {
                 1: { 
-                    title: "LEVEL 1: FROG LIFE CYCLE 🐸", 
+                    title: "LEVEL 1: Frog Life Cycle 🐸", 
                     time: 20, // <-- 20 GIÂY
-                    guide: "Drag the English words to the correct spots.", bg: "frog.jpg", items: [ { id: "i-frog", text: "Frog", type: "txt" }, { id: "i-eggs", text: "Eggs", type: "txt" }, { id: "i-tadpole", text: "Tadpole", type: "txt" }, { id: "i-legs", text: "Tadpole w/ legs", type: "txt" }, { id: "i-froglet", text: "Froglet", type: "txt" } ], zones: [ { match: "i-frog", id: "dz-frog", class: "z-frog" }, { match: "i-eggs", id: "dz-eggs", class: "z-frog" }, { match: "i-tadpole", id: "dz-tadpole", class: "z-frog" }, { match: "i-legs", id: "dz-legs", class: "z-frog" }, { match: "i-froglet", id: "dz-froglet", class: "z-frog" } ] 
+                    guide: "Drag the words to the correct spots.", bg: "frog.jpg", items: [ { id: "i-frog", text: "Frog", type: "txt" }, { id: "i-eggs", text: "Eggs", type: "txt" }, { id: "i-tadpole", text: "Tadpole", type: "txt" }, { id: "i-legs", text: "Tadpole w/ legs", type: "txt" }, { id: "i-froglet", text: "Froglet", type: "txt" } ], zones: [ { match: "i-frog", id: "dz-frog", class: "z-frog" }, { match: "i-eggs", id: "dz-eggs", class: "z-frog" }, { match: "i-tadpole", id: "dz-tadpole", class: "z-frog" }, { match: "i-legs", id: "dz-legs", class: "z-frog" }, { match: "i-froglet", id: "dz-froglet", class: "z-frog" } ] 
                 },
                 2: { 
-                    title: "LEVEL 2: BIRD LIFE CYCLE 🐦", 
+                    title: "LEVEL 2: The Life Cycle of a Bird 🐦", 
                     time: 40, // <-- 40 GIÂY
                     guide: "Drag PICTURES and WORDS to correct spots.", bg: "birb_bg.jpg", items: [ { id: "t-bird", text: "Bird", type: "txt" }, { id: "t-egg", text: "Egg", type: "txt" }, { id: "t-hatch", text: "Hatchling", type: "txt" }, { id: "t-chick", text: "Chick", type: "txt" }, { id: "p-bird", img: "birb_adult", type: "img", label: "Bird" }, { id: "p-hatch", img: "hatchling", type: "img", label: "Hatchling" }, { id: "p-chick", img: "chick", type: "img", label: "Chick" } ], zones: [ { match: "t-bird", id: "dz-t-bird", class: "z-bird-txt" }, { match: "t-egg", id: "dz-t-egg", class: "z-bird-txt" }, { match: "t-hatch", id: "dz-t-hatch", class: "z-bird-txt" }, { match: "t-chick", id: "dz-t-chick", class: "z-bird-txt" }, { match: "p-bird", id: "dz-i-bird", class: "z-bird-img" }, { match: "p-hatch", id: "dz-i-hatch", class: "z-bird-img" }, { match: "p-chick", id: "dz-i-chick", class: "z-bird-img" } ] 
                 }
