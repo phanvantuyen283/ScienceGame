@@ -312,58 +312,72 @@
                 }
             },
 
-            loadLevel: function(lv) {
-                this.state.lv = lv; this.state.time = d.time ; this.state.correct = 0; this.state.tempScore = 0;
-                const d = this.data[lv];
+                      loadLevel: function(lv) {
+                // 1. Xác định Level và Lấy dữ liệu (d) trước
+                this.state.lv = lv;
+                const d = this.data[lv]; 
+
+                // 2. Cài đặt thời gian từ dữ liệu vừa lấy
+                this.state.time = d.time; 
+                
+                // 3. Reset các chỉ số khác
+                this.state.correct = 0;
+                this.state.tempScore = 0;
+                
+                // 4. Hiển thị giao diện
                 document.getElementById('ui-title').innerText = d.title;
                 document.getElementById('ui-guide').innerText = d.guide;
                 document.getElementById('game-bg').src = d.bg;
+                
+                // Hiển thị thời gian lên đồng hồ
                 document.getElementById('ui-timer').innerText = this.state.time; 
                 document.getElementById('ui-timer').style.color = "var(--warning)";
 
-                const zArea = document.getElementById('zones-area'); zArea.innerHTML = "";
+                // 5. Tạo các ô thả (Drop Zones) - Code cũ
+                const za = document.getElementById('zones-area');
+                za.innerHTML = "";
                 d.zones.forEach(z => {
                     const div = document.createElement('div');
-                    div.className = `drop-zone ${z.class}`; div.id = z.id; div.setAttribute('data-target', z.match);
-                    if(z.class.includes('z-bird-img')) {
-                         div.innerHTML = `<span style="font-size: 11px; color: #888; text-align: center; line-height: 1.2; font-weight: normal;">Drop<br>Picture<br>Here</span>`;
-                    } else { div.innerHTML = "<span>?</span>"; }
+                    div.className = `drop-zone ${z.class}`;
+                    div.id = z.id;
+                    div.setAttribute('data-target', z.match);
+                    if(z.class.includes('z-bird-img')) div.innerHTML = `<span style="font-size: 11px; color: #888; text-align: center; line-height: 1.2; font-weight: normal;">Drop<br>Picture<br>Here</span>`;
+                    else div.innerHTML = "<span>?</span>";
                     div.addEventListener('dragover', e => { e.preventDefault(); div.classList.add('hover'); });
                     div.addEventListener('dragleave', () => div.classList.remove('hover'));
                     div.addEventListener('drop', this.handleDrop);
-                    zArea.appendChild(div);
+                    za.appendChild(div);
                 });
 
-                const dock = document.getElementById('dock'); dock.innerHTML = "";
+                // 6. Tạo các thẻ kéo (Draggable Items) - Code cũ
+                const dk = document.getElementById('dock');
+                dk.innerHTML = "";
                 const items = [...d.items].sort(() => Math.random() - 0.5);
-                items.forEach(item => {
-                    const div = document.createElement('div'); div.id = item.id; div.draggable = true;
-                    const speechText = item.type === 'txt' ? item.text : (item.label || "Picture");
-                    if(item.type === 'txt') { div.className = "draggable"; div.innerText = item.text; } 
-                    else { div.className = "draggable img-card"; div.innerHTML = `<img src="${item.img}.png" onerror="this.src='${item.img}.jpg'" draggable="false">`; }
-                    
-                    div.addEventListener('dragstart', e => {
-                        AudioSys.unlock(); AudioSys.speak(speechText);
-                        e.dataTransfer.setData('text', item.id); setTimeout(() => div.style.opacity = 0.5, 0);
-                    });
-                    div.addEventListener('touchstart', () => { AudioSys.unlock(); AudioSys.speak(speechText); });
+                items.forEach(i => {
+                    const div = document.createElement('div');
+                    div.id = i.id;
+                    div.draggable = true;
+                    const txt = i.type === 'txt' ? i.text : (i.label || "Picture");
+                    if(i.type === 'txt') { div.className = "draggable"; div.innerText = i.text; }
+                    else { div.className = "draggable img-card"; div.innerHTML = `<img src="${i.img}.png" onerror="this.src='${i.img}.jpg'" draggable="false">`; }
+                    div.addEventListener('dragstart', e => { AudioSys.unlock(); AudioSys.speak(txt); e.dataTransfer.setData('text', i.id); setTimeout(() => div.style.opacity = 0.5, 0); });
+                    div.addEventListener('touchstart', () => { AudioSys.unlock(); AudioSys.speak(txt); });
                     div.addEventListener('dragend', () => div.style.opacity = 1);
-                    dock.appendChild(div);
+                    dk.appendChild(div);
                 });
 
+                // 7. Chạy đồng hồ đếm ngược
                 clearInterval(this.state.timer);
                 this.state.timer = setInterval(() => {
                     this.state.time--;
-                    const timerEl = document.getElementById('ui-timer'); timerEl.innerText = this.state.time;
-                    if(this.state.time <= 10) timerEl.style.color = "var(--danger)";
+                    document.getElementById('ui-timer').innerText = this.state.time;
+                    if(this.state.time <= 10) document.getElementById('ui-timer').style.color = "var(--danger)";
                     if(this.state.time <= 0) this.endLevel(false);
                 }, 1000);
                 
-                // Gọi lại resize để đảm bảo hiển thị đúng khi chuyển màn
                 this.resizeBoard();
             },
-
-            handleDrop: function(e) {
+          handleDrop: function(e) {
                 e.preventDefault(); const zone = e.currentTarget; zone.classList.remove('hover');
                 if(zone.classList.contains('correct')) return;
                 const itemId = e.dataTransfer.getData('text'); const targetId = zone.getAttribute('data-target'); const itemEl = document.getElementById(itemId);
