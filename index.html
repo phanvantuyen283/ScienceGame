@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Science Game: Life Cycles</title>
+    <title>Science Game:  Animal Life Cycles</title>
     <style>
         :root {
             --primary: #4A90E2; --success: #2ECC71; --warning: #F1C40F; --danger: #E74C3C;
@@ -151,8 +151,8 @@
                 <h1>🧬 SCIENCE EXPLORER</h1>
                 <p Animal Life Cycles </p>
                 <input type="text" id="inp-name" placeholder="Enter your name..." autocomplete="off">
-                <div class="brand-text">👩‍🏫 Teacher: Mrs. Hoang Hien</div>
-                <button class="btn-action" onclick="Game.start()">START GAME ▶</button>
+                <div class="brand-text">👩‍🏫 Teacher: Ms.Hien</div>
+                <button class="btn-action" onclick="Game.start()">START ▶</button>
             </div>
         </div>
     </div>
@@ -254,8 +254,8 @@
                     ]
                 },
                 2: {
-                    title: "LEVEL 2: BIRD LIFE CYCLE 🐦",
-                    guide: "Drag PICTURES and WORDS to correct spots.",
+                    title: "LEVEL 2: Bird Life Cycle 🐦",
+                    guide: "Drag pictures and words to the correct spots.",
                     bg: "birb_bg.jpg", 
                     items: [
                         { id: "t-bird", text: "Bird", type: "txt" }, 
@@ -274,7 +274,7 @@
                     ]
                 }
             },
-            state: { lv: 1, score: 0, tempScore: 0, correct: 0, timer: null, time: 90 },
+            state: { lv: 1, score: 0, tempScore: 0, correct: 0, timer: null, time: 20 },
 
             start: function() {
                 const name = document.getElementById('inp-name').value.trim();
@@ -311,12 +311,12 @@
             },
 
             loadLevel: function(lv) {
-                this.state.lv = lv; this.state.time = 90; this.state.correct = 0; this.state.tempScore = 0;
+                this.state.lv = lv; this.state.time = 40; this.state.correct = 0; this.state.tempScore = 0;
                 const d = this.data[lv];
                 document.getElementById('ui-title').innerText = d.title;
                 document.getElementById('ui-guide').innerText = d.guide;
                 document.getElementById('game-bg').src = d.bg;
-                document.getElementById('ui-timer').innerText = 90; 
+                document.getElementById('ui-timer').innerText = 40; 
                 document.getElementById('ui-timer').style.color = "var(--warning)";
 
                 const zArea = document.getElementById('zones-area'); zArea.innerHTML = "";
