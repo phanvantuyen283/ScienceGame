@@ -3,434 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Science Game:  Animal Life Cycles</title>
+    <title>Science Game: Life Cycles</title>
     <style>
-        :root {
-            --primary: #4A90E2; --success: #2ECC71; --warning: #F1C40F; --danger: #E74C3C;
-            --dark: #2C3E50; --board-w: 800px; --board-h: 600px;
-            --brand: #E91E63;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif; background-color: #E3F2FD; margin: 0;
-            display: flex; justify-content: center; min-height: 100vh; user-select: none; padding: 10px 0;
-            overflow-x: hidden; /* Chặn cuộn ngang */
-        }
-
+        :root { --primary: #4A90E2; --success: #2ECC71; --warning: #F1C40F; --danger: #E74C3C; --dark: #2C3E50; --board-w: 800px; --board-h: 600px; --brand: #E91E63; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #E3F2FD; margin: 0; display: flex; justify-content: center; min-height: 100vh; user-select: none; padding: 10px 0; overflow-x: hidden; }
         .container { width: 100%; max-width: 1000px; text-align: center; position: relative; }
-        .screen { display: none; animation: fadeIn 0.5s ease-in-out; width: 100%; }
-        .screen.active { display: block; }
+        .screen { display: none; animation: fadeIn 0.5s ease-in-out; width: 100%; } .screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* START SCREEN */
-        .start-card {
-            background: white; padding: 40px 20px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            display: inline-block; margin-top: 40px; width: 90%; max-width: 550px; border-top: 5px solid var(--primary);
-        }
+        .start-card { background: white; padding: 40px 20px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: inline-block; margin-top: 40px; width: 90%; max-width: 550px; border-top: 5px solid var(--primary); }
         .start-card h1 { margin-bottom: 10px; color: var(--dark); font-size: clamp(1.5rem, 5vw, 2.5rem); }
         .start-card p { margin-bottom: 30px; color: #7f8c8d; font-size: 1.1em; }
-
-        input[type="text"] {
-            padding: 15px 20px; font-size: 18px; border-radius: 50px; border: 2px solid #E0E0E0; width: 80%;
-            margin-bottom: 15px; outline: none; text-align: center;
-        }
-        
-        .brand-text {
-            color: var(--brand); font-weight: bold; font-size: 1.1em; margin-bottom: 25px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-
-        .btn-action {
-            padding: 15px 40px; border: none; border-radius: 50px; font-size: 18px; font-weight: bold;
-            cursor: pointer; color: white; background: var(--primary); transition: all 0.2s;
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
-            white-space: nowrap;
-        }
+        input[type="text"] { padding: 15px 20px; font-size: 18px; border-radius: 50px; border: 2px solid #E0E0E0; width: 80%; margin-bottom: 15px; outline: none; text-align: center; }
+        .brand-text { color: var(--brand); font-weight: bold; font-size: 1.1em; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-action { padding: 15px 40px; border: none; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; color: white; background: var(--primary); transition: all 0.2s; box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4); white-space: nowrap; }
         .btn-action:hover { transform: translateY(-3px); background: #357ABD; }
-
-        /* GAME SCREEN */
-        .hud {
-            display: flex; justify-content: space-between; align-items: center; background: white;
-            padding: 10px 20px; border-radius: 15px; margin: 0 auto 15px auto; font-weight: bold; font-size: 16px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary);
-            width: 90%; max-width: 800px; box-sizing: border-box;
-        }
-        
-        /* KHUNG GAME (Sẽ được scale bằng JS) */
-        .game-wrapper-outer {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            overflow: hidden; /* Ẩn phần thừa khi scale */
-            margin-bottom: 10px;
-        }
-        
-        .game-board-wrapper {
-            position: relative; width: var(--board-w); height: var(--board-h); 
-            border: 4px solid white; border-radius: 20px; overflow: hidden; background: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            /* Quan trọng cho việc Scale */
-            transform-origin: top center; 
-            flex-shrink: 0;
-        }
+        .hud { display: flex; justify-content: space-between; align-items: center; background: white; padding: 10px 20px; border-radius: 15px; margin: 0 auto 15px auto; font-weight: bold; font-size: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary); width: 90%; max-width: 800px; box-sizing: border-box; }
+        .game-wrapper-outer { width: 100%; display: flex; justify-content: center; overflow: hidden; margin-bottom: 10px; }
+        .game-board-wrapper { position: relative; width: var(--board-w); height: var(--board-h); border: 4px solid white; border-radius: 20px; overflow: hidden; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transform-origin: top center; flex-shrink: 0; }
         .game-bg { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-
-        /* DROP ZONES */
-        .drop-zone {
-            position: absolute; display: flex; justify-content: center; align-items: center;
-            background: rgba(255, 255, 255, 0.95); border: 3px dashed #BDBDBD; border-radius: 12px;
-            font-size: 24px; color: #BDBDBD; font-weight: 900; transition: 0.3s;
-        }
+        .drop-zone { position: absolute; display: flex; justify-content: center; align-items: center; background: rgba(255, 255, 255, 0.95); border: 3px dashed #BDBDBD; border-radius: 12px; font-size: 24px; color: #BDBDBD; font-weight: 900; transition: 0.3s; }
         .drop-zone.hover { background: #E3F2FD; transform: scale(1.05); border-color: var(--primary); color: var(--primary); }
-        .drop-zone.correct { background: transparent !important; border: 3px solid var(--success); box-shadow: none; }
-        .drop-zone.correct span { display: none; }
-        .drop-zone.correct img { animation: popIn 0.5s; }
-
-        /* LAYER CONTROL */
-        .z-bird-img { z-index: 10; background: rgba(255, 255, 255, 0.8); }
-        .z-bird-txt { z-index: 20; background: rgba(255, 255, 255, 0.85); border-color: var(--primary); color: var(--primary); }
-
-        /* DOCK (Thanh chứa thẻ) */
-        .dock {
-            margin: 0 auto; min-height: 110px; display: flex; justify-content: center; gap: 15px;
-            flex-wrap: wrap; background: white; padding: 15px; border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 3px solid #BDBDBD;
-            width: 90%; max-width: 800px; box-sizing: border-box;
-        }
-        .draggable {
-            background: var(--primary); color: white; padding: 10px 20px; border-radius: 12px;
-            cursor: grab; font-weight: bold; font-size: 18px; box-shadow: 0 5px 0 #2980b9;
-            touch-action: none; /* Quan trọng cho touch */
-        }
+        .drop-zone.correct { background: transparent !important; border: 3px solid var(--success); box-shadow: none; } .drop-zone.correct span { display: none; } .drop-zone.correct img { animation: popIn 0.5s; }
+        .z-bird-img { z-index: 10; background: rgba(255, 255, 255, 0.8); } .z-bird-txt { z-index: 20; background: rgba(255, 255, 255, 0.85); border-color: var(--primary); color: var(--primary); }
+        .dock { margin: 0 auto; min-height: 110px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 3px solid #BDBDBD; width: 90%; max-width: 800px; box-sizing: border-box; }
+        .draggable { background: var(--primary); color: white; padding: 10px 20px; border-radius: 12px; cursor: grab; font-weight: bold; font-size: 18px; box-shadow: 0 5px 0 #2980b9; touch-action: none; }
         .draggable:active { transform: translateY(4px); box-shadow: 0 1px 0 #2980b9; }
-        .draggable.img-card {
-            background: white; border: 3px solid var(--primary); padding: 5px; width: 80px; height: 80px;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .draggable.img-card { background: white; border: 3px solid var(--primary); padding: 5px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
         .draggable.img-card img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
-
-        /* MODAL */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
-            display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(8px);
-        }
-        .modal-box {
-            background: white; padding: 30px; border-radius: 25px; text-align: center; width: 90%; max-width: 450px;
-            animation: slideUp 0.4s ease-out;
-        }
-        @keyframes slideUp { from {transform: translateY(50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
-        @keyframes popIn { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(8px); }
+        .modal-box { background: white; padding: 30px; border-radius: 25px; text-align: center; width: 90%; max-width: 450px; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from {transform: translateY(50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} } @keyframes popIn { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
         .stat-box { background:#F8F9FA; padding:15px; margin:25px 0; border-radius:15px; text-align:left; border-left: 5px solid; }
-
-        /* --- TỌA ĐỘ VỊ TRÍ --- */
-        /* LEVEL 1: FROG */
+        /* COORDINATES */
         .z-frog { width: 120px; height: 40px; z-index: 10; background: rgba(255,255,255,0.95); }
-        #dz-frog { top: 20%; left: 42%; }
-        #dz-eggs { top: 49%; left: 78%; }
-        #dz-tadpole { top: 78%; left: 68%; }
-        #dz-legs { top: 84%; left: 17%; }
-        #dz-froglet { top: 49%; left: 3%; }
-
-        /* LEVEL 2: BIRD */
-        .z-bird-txt { width: 110px; height: 35px; }
-        .z-bird-img { width: 90px; height: 90px; border-radius: 50%; border-color: var(--warning); color: var(--warning); }
-        
-        #dz-t-egg { top: 42%; left: 44%; } 
-        
-        #dz-i-hatch { top: 33%; left: 73%; } #dz-t-hatch { top: 51%; left: 71%; }
-        #dz-i-chick { top: 62%; left: 45%; } #dz-t-chick { top: 80%; left: 44%; }
+        #dz-frog { top: 20%; left: 42%; } #dz-eggs { top: 49%; left: 78%; } #dz-tadpole { top: 78%; left: 68%; } #dz-legs { top: 84%; left: 17%; } #dz-froglet { top: 49%; left: 3%; }
+        .z-bird-txt { width: 110px; height: 35px; } .z-bird-img { width: 90px; height: 90px; border-radius: 50%; border-color: var(--warning); color: var(--warning); }
+        #dz-t-egg { top: 42%; left: 44%; } #dz-i-hatch { top: 33%; left: 73%; } #dz-t-hatch { top: 51%; left: 71%; } #dz-i-chick { top: 62%; left: 45%; } #dz-t-chick { top: 80%; left: 44%; }
         #dz-i-bird { top: 33%; left: 15%; } #dz-t-bird { top: 42%; left: 14%; }
-
     </style>
 </head>
 <body>
-
     <div id="screen-start" class="screen active">
-        <div class="container">
-            <div class="start-card">
-                <h1>🧬 SCIENCE EXPLORER</h1>
-                <p Animal Life Cycles </p>
-                <input type="text" id="inp-name" placeholder="Enter your name..." autocomplete="off">
-                <div class="brand-text">👩‍🏫 Teacher: Ms.Hien</div>
-                <button class="btn-action" onclick="Game.start()">START ▶</button>
-            </div>
-        </div>
+        <div class="container"><div class="start-card"><h1>🧬 SCIENCE EXPLORER</h1><p>Discover Animal Life Cycles</p><input type="text" id="inp-name" placeholder="Enter your name..." autocomplete="off"><div class="brand-text">👩‍🏫 Teacher: Mrs. Hoang Hien</div><button class="btn-action" onclick="Game.start()">START GAME ▶</button></div></div>
     </div>
-
     <div id="screen-game" class="screen">
-        <div class="container">
-            <div class="hud">
-                <div>👤 <span id="ui-player" style="color: var(--primary)">Student</span></div>
-                <div>⏳ <span id="ui-timer" style="color: var(--warning)">90</span>s</div>
-                <div>⭐ <span id="ui-score" style="color: var(--success)">0</span></div>
-            </div>
-            
-            <h2 id="ui-title" style="margin: 0 0 5px 0; color: var(--dark)">Level Title</h2>
-            <p id="ui-guide" style="margin: 0 0 10px 0; color: #666">Instructions</p>
-
-            <div class="game-wrapper-outer" id="game-scaler">
-                <div class="game-board-wrapper" id="game-board">
-                    <img id="game-bg" class="game-bg" src="" alt="Background">
-                    <div id="zones-area"></div>
-                </div>
-            </div>
-
-            <div id="dock" class="dock"></div>
-        </div>
+        <div class="container"><div class="hud"><div>👤 <span id="ui-player" style="color: var(--primary)">Student</span></div><div>⏳ <span id="ui-timer" style="color: var(--warning)">90</span>s</div><div>⭐ Score: <span id="ui-score" style="color: var(--success)">0</span></div></div><h2 id="ui-title" style="margin: 0 0 5px 0; color: var(--dark)">Level Title</h2><p id="ui-guide" style="margin: 0 0 10px 0; color: #666">Instructions</p><div class="game-wrapper-outer" id="game-scaler"><div class="game-board-wrapper" id="game-board"><img id="game-bg" class="game-bg" src="" alt="Background"><div id="zones-area"></div></div></div><div id="dock" class="dock"></div></div>
     </div>
-
     <div id="modal" class="modal-overlay">
-        <div class="modal-box">
-            <h2 id="modal-title">Result</h2>
-            <p id="modal-msg">...</p>
-            <div id="stat-box-container" class="stat-box">
-                <p>✅ Correct: <b id="stat-correct">0</b></p>
-                <p>⭐ Score: <b id="stat-score">0</b></p>
-            </div>
-            <button id="modal-btn" class="btn-action">Continue</button>
-        </div>
+        <div class="modal-box"><h2 id="modal-title">Result</h2><p id="modal-msg">...</p><div id="stat-box-container" class="stat-box"><p>✅ Correct: <b id="stat-correct">0</b></p><p>⭐ Score: <b id="stat-score">0</b></p></div><button id="modal-btn" class="btn-action">Continue</button></div>
     </div>
-
     <script>
         const AudioSys = {
             ctx: null, unlocked: false,
-            init: function() {
-                try { window.AudioContext = window.AudioContext || window.webkitAudioContext; this.ctx = new AudioContext(); } catch(e) {}
-            },
-            unlock: function() {
-                if (!this.ctx || this.unlocked) return;
-                const buffer = this.ctx.createBuffer(1, 1, 22050);
-                const source = this.ctx.createBufferSource();
-                source.buffer = buffer;
-                source.connect(this.ctx.destination);
-                if (source.start) source.start(0); else source.noteOn(0);
-                if (this.ctx.state === 'suspended') this.ctx.resume().then(() => { this.unlocked = true; });
-                else this.unlocked = true;
-            },
-            playTone: function(freq, type, duration) {
-                if (!this.ctx) this.init();
-                if (this.ctx.state === 'suspended') this.ctx.resume();
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + duration);
-            },
+            init: function() { try { window.AudioContext = window.AudioContext || window.webkitAudioContext; this.ctx = new AudioContext(); } catch(e) {} },
+            unlock: function() { if (!this.ctx || this.unlocked) return; const b = this.ctx.createBuffer(1, 1, 22050); const s = this.ctx.createBufferSource(); s.buffer = b; s.connect(this.ctx.destination); if (s.start) s.start(0); else s.noteOn(0); if (this.ctx.state === 'suspended') this.ctx.resume().then(() => { this.unlocked = true; }); else this.unlocked = true; },
+            playTone: function(f, t, d) { if (!this.ctx) this.init(); if (this.ctx.state === 'suspended') this.ctx.resume(); const o = this.ctx.createOscillator(); const g = this.ctx.createGain(); o.type = t; o.frequency.setValueAtTime(f, this.ctx.currentTime); g.gain.setValueAtTime(0.2, this.ctx.currentTime); o.connect(g); g.connect(this.ctx.destination); o.start(); o.stop(this.ctx.currentTime + d); },
             playCorrect: function() { this.playTone(600, 'sine', 0.1); setTimeout(() => this.playTone(800, 'sine', 0.2), 150); },
             playWrong: function() { this.playTone(150, 'sawtooth', 0.4); },
-            speak: function(text) {
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const utter = new SpeechSynthesisUtterance(text);
-                    utter.lang = 'en-US'; utter.rate = 0.9; utter.volume = 1;
-                    window.speechSynthesis.speak(utter);
-                }
-            }
+            speak: function(text) { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.9; u.volume = 1; window.speechSynthesis.speak(u); } }
         };
-
         const Game = {
             data: {
-                1: {
-                    title: "LEVEL 1: Frog Life Cycle 🐸",
-                    time : 20
-                    guide: "Drag the words to the correct spots.",
-                    bg: "frog.jpg",
-                    items: [
-                        { id: "i-frog", text: "Frog", type: "txt" },
-                        { id: "i-eggs", text: "Eggs", type: "txt" },
-                        { id: "i-tadpole", text: "Tadpole", type: "txt" },
-                        { id: "i-legs", text: "Tadpole with legs", type: "txt" },
-                        { id: "i-froglet", text: "Froglet", type: "txt" }
-                    ],
-                    zones: [
-                        { match: "i-frog", id: "dz-frog", class: "z-frog" },
-                        { match: "i-eggs", id: "dz-eggs", class: "z-frog" },
-                        { match: "i-tadpole", id: "dz-tadpole", class: "z-frog" },
-                        { match: "i-legs", id: "dz-legs", class: "z-frog" },
-                        { match: "i-froglet", id: "dz-froglet", class: "z-frog" }
-                    ]
+                1: { 
+                    title: "LEVEL 1: FROG LIFE CYCLE 🐸", 
+                    time: 20, // <-- 20 GIÂY
+                    guide: "Drag the English words to the correct spots.", bg: "frog.jpg", items: [ { id: "i-frog", text: "Frog", type: "txt" }, { id: "i-eggs", text: "Eggs", type: "txt" }, { id: "i-tadpole", text: "Tadpole", type: "txt" }, { id: "i-legs", text: "Tadpole w/ legs", type: "txt" }, { id: "i-froglet", text: "Froglet", type: "txt" } ], zones: [ { match: "i-frog", id: "dz-frog", class: "z-frog" }, { match: "i-eggs", id: "dz-eggs", class: "z-frog" }, { match: "i-tadpole", id: "dz-tadpole", class: "z-frog" }, { match: "i-legs", id: "dz-legs", class: "z-frog" }, { match: "i-froglet", id: "dz-froglet", class: "z-frog" } ] 
                 },
-                2: {
-                    title: "LEVEL 2: Bird Life Cycle 🐦",
-                    time: 40
-                    guide: "Drag pictures and words to the correct spots.",
-                    bg: "birb_bg.jpg", 
-                    items: [
-                        { id: "t-bird", text: "Bird", type: "txt" }, 
-                        { id: "t-egg", text: "Egg", type: "txt" },
-                        { id: "t-hatch", text: "Hatchling", type: "txt" }, 
-                        { id: "t-chick", text: "Chick", type: "txt" },
-                        { id: "p-bird", img: "birb_adult", type: "img", label: "Bird" },      
-                        { id: "p-hatch", img: "hatchling", type: "img", label: "Hatchling" }, 
-                        { id: "p-chick", img: "chick", type: "img", label: "Chick" }
-                    ],
-                    zones: [
-                        { match: "t-bird", id: "dz-t-bird", class: "z-bird-txt" }, { match: "t-egg", id: "dz-t-egg", class: "z-bird-txt" },
-                        { match: "t-hatch", id: "dz-t-hatch", class: "z-bird-txt" }, { match: "t-chick", id: "dz-t-chick", class: "z-bird-txt" },
-                        { match: "p-bird", id: "dz-i-bird", class: "z-bird-img" }, 
-                        { match: "p-hatch", id: "dz-i-hatch", class: "z-bird-img" }, { match: "p-chick", id: "dz-i-chick", class: "z-bird-img" }
-                    ]
+                2: { 
+                    title: "LEVEL 2: BIRD LIFE CYCLE 🐦", 
+                    time: 40, // <-- 40 GIÂY
+                    guide: "Drag PICTURES and WORDS to correct spots.", bg: "birb_bg.jpg", items: [ { id: "t-bird", text: "Bird", type: "txt" }, { id: "t-egg", text: "Egg", type: "txt" }, { id: "t-hatch", text: "Hatchling", type: "txt" }, { id: "t-chick", text: "Chick", type: "txt" }, { id: "p-bird", img: "birb_adult", type: "img", label: "Bird" }, { id: "p-hatch", img: "hatchling", type: "img", label: "Hatchling" }, { id: "p-chick", img: "chick", type: "img", label: "Chick" } ], zones: [ { match: "t-bird", id: "dz-t-bird", class: "z-bird-txt" }, { match: "t-egg", id: "dz-t-egg", class: "z-bird-txt" }, { match: "t-hatch", id: "dz-t-hatch", class: "z-bird-txt" }, { match: "t-chick", id: "dz-t-chick", class: "z-bird-txt" }, { match: "p-bird", id: "dz-i-bird", class: "z-bird-img" }, { match: "p-hatch", id: "dz-i-hatch", class: "z-bird-img" }, { match: "p-chick", id: "dz-i-chick", class: "z-bird-img" } ] 
                 }
             },
             state: { lv: 1, score: 0, tempScore: 0, correct: 0, timer: null, time: 20 },
-
-            start: function() {
-                const name = document.getElementById('inp-name').value.trim();
-                if(!name) { alert("Please enter your name first!"); return; }
-                AudioSys.init(); AudioSys.unlock(); AudioSys.speak("Hello " + name + ". Let's play!");
-                document.getElementById('ui-player').innerText = name;
-                document.getElementById('screen-start').classList.remove('active');
-                document.getElementById('screen-game').classList.add('active');
+            
+            start: function() { const n = document.getElementById('inp-name').value.trim(); if(!n) { alert("Please enter your name first!"); return; } AudioSys.init(); AudioSys.unlock(); AudioSys.speak("Hello " + n + ". Let's play!"); document.getElementById('ui-player').innerText = n; document.getElementById('screen-start').classList.remove('active'); document.getElementById('screen-game').classList.add('active'); this.resizeBoard(); window.addEventListener('resize', () => this.resizeBoard()); this.loadLevel(1); },
+            resizeBoard: function() { const b = document.getElementById('game-board'); const c = document.getElementById('game-scaler'); const sw = window.innerWidth; const gw = 800; if (sw < gw) { const s = (sw - 20) / gw; b.style.transform = `scale(${s})`; c.style.height = `${600 * s}px`; } else { b.style.transform = 'scale(1)'; c.style.height = '600px'; } },
+            
+            loadLevel: function(lv) { 
+                this.state.lv = lv; 
+                const d = this.data[lv]; // <-- KHAI BÁO BIẾN D TRƯỚC
+                this.state.time = d.time; // <-- SAU ĐÓ MỚI LẤY THỜI GIAN
                 
-                // Kích hoạt tính năng Auto Scale cho điện thoại
-                this.resizeBoard();
-                window.addEventListener('resize', () => this.resizeBoard());
-                
-                this.loadLevel(1);
-            },
-
-            // --- HÀM TỰ ĐỘNG THU PHÓNG (AUTO SCALE) ---
-            resizeBoard: function() {
-                const board = document.getElementById('game-board');
-                const container = document.getElementById('game-scaler');
-                const screenWidth = window.innerWidth;
-                const gameWidth = 800;
-                
-                // Nếu màn hình nhỏ hơn game (điện thoại), tính tỷ lệ thu nhỏ
-                if (screenWidth < gameWidth) {
-                    const scale = (screenWidth - 20) / gameWidth; // -20px lề
-                    board.style.transform = `scale(${scale})`;
-                    // Điều chỉnh chiều cao khung bao để không bị khoảng trắng thừa
-                    container.style.height = `${600 * scale}px`;
-                } else {
-                    board.style.transform = 'scale(1)';
-                    container.style.height = '600px';
-                }
-            },
-
-                      loadLevel: function(lv) {
-                // 1. Xác định Level và Lấy dữ liệu (d) trước
-                this.state.lv = lv;
-                const d = this.data[lv]; 
-
-                // 2. Cài đặt thời gian từ dữ liệu vừa lấy
-                this.state.time = d.time; 
-                
-                // 3. Reset các chỉ số khác
-                this.state.correct = 0;
-                this.state.tempScore = 0;
-                
-                // 4. Hiển thị giao diện
-                document.getElementById('ui-title').innerText = d.title;
-                document.getElementById('ui-guide').innerText = d.guide;
-                document.getElementById('game-bg').src = d.bg;
-                
-                // Hiển thị thời gian lên đồng hồ
-                document.getElementById('ui-timer').innerText = this.state.time; 
-                document.getElementById('ui-timer').style.color = "var(--warning)";
-
-                // 5. Tạo các ô thả (Drop Zones) - Code cũ
-                const za = document.getElementById('zones-area');
-                za.innerHTML = "";
-                d.zones.forEach(z => {
-                    const div = document.createElement('div');
-                    div.className = `drop-zone ${z.class}`;
-                    div.id = z.id;
-                    div.setAttribute('data-target', z.match);
-                    if(z.class.includes('z-bird-img')) div.innerHTML = `<span style="font-size: 11px; color: #888; text-align: center; line-height: 1.2; font-weight: normal;">Drop<br>Picture<br>Here</span>`;
-                    else div.innerHTML = "<span>?</span>";
-                    div.addEventListener('dragover', e => { e.preventDefault(); div.classList.add('hover'); });
-                    div.addEventListener('dragleave', () => div.classList.remove('hover'));
-                    div.addEventListener('drop', this.handleDrop);
-                    za.appendChild(div);
-                });
-
-                // 6. Tạo các thẻ kéo (Draggable Items) - Code cũ
-                const dk = document.getElementById('dock');
-                dk.innerHTML = "";
-                const items = [...d.items].sort(() => Math.random() - 0.5);
-                items.forEach(i => {
-                    const div = document.createElement('div');
-                    div.id = i.id;
-                    div.draggable = true;
-                    const txt = i.type === 'txt' ? i.text : (i.label || "Picture");
-                    if(i.type === 'txt') { div.className = "draggable"; div.innerText = i.text; }
-                    else { div.className = "draggable img-card"; div.innerHTML = `<img src="${i.img}.png" onerror="this.src='${i.img}.jpg'" draggable="false">`; }
-                    div.addEventListener('dragstart', e => { AudioSys.unlock(); AudioSys.speak(txt); e.dataTransfer.setData('text', i.id); setTimeout(() => div.style.opacity = 0.5, 0); });
-                    div.addEventListener('touchstart', () => { AudioSys.unlock(); AudioSys.speak(txt); });
-                    div.addEventListener('dragend', () => div.style.opacity = 1);
-                    dk.appendChild(div);
-                });
-
-                // 7. Chạy đồng hồ đếm ngược
-                clearInterval(this.state.timer);
-                this.state.timer = setInterval(() => {
-                    this.state.time--;
-                    document.getElementById('ui-timer').innerText = this.state.time;
-                    if(this.state.time <= 10) document.getElementById('ui-timer').style.color = "var(--danger)";
-                    if(this.state.time <= 0) this.endLevel(false);
-                }, 1000);
-                
-                this.resizeBoard();
-            },
-          handleDrop: function(e) {
-                e.preventDefault(); const zone = e.currentTarget; zone.classList.remove('hover');
-                if(zone.classList.contains('correct')) return;
-                const itemId = e.dataTransfer.getData('text'); const targetId = zone.getAttribute('data-target'); const itemEl = document.getElementById(itemId);
-                if(!itemEl) return;
-
-                if(itemId === targetId) {
-                    AudioSys.playCorrect();
-                    const praises = ["Correct!", "Good job!", "Excellent!", "Well done!"];
-                    AudioSys.speak(praises[Math.floor(Math.random() * praises.length)]);
-                    zone.classList.add('correct');
-                    if(itemEl.classList.contains('img-card')) { zone.innerHTML = itemEl.innerHTML; } else { zone.innerText = itemEl.innerText; }
-                    itemEl.style.display = 'none';
-                    Game.state.tempScore += 10; Game.state.correct++; Game.updateScore();
-                    if(Game.state.correct === Game.data[Game.state.lv].items.length) { setTimeout(() => Game.endLevel(true), 500); }
-                } else {
-                    AudioSys.playWrong(); AudioSys.speak("Try again!");
-                    zone.style.borderColor = "var(--danger)"; zone.style.animation = "shake 0.3s";
-                    setTimeout(() => { zone.style.borderColor = ""; zone.style.animation = ""; }, 300);
-                }
-            },
+                this.state.correct = 0; this.state.tempScore = 0; document.getElementById('ui-title').innerText = d.title; document.getElementById('ui-guide').innerText = d.guide; document.getElementById('game-bg').src = d.bg; document.getElementById('ui-timer').innerText = this.state.time; document.getElementById('ui-timer').style.color = "var(--warning)"; const za = document.getElementById('zones-area'); za.innerHTML = ""; d.zones.forEach(z => { const div = document.createElement('div'); div.className = `drop-zone ${z.class}`; div.id = z.id; div.setAttribute('data-target', z.match); if(z.class.includes('z-bird-img')) div.innerHTML = `<span style="font-size: 11px; color: #888; text-align: center; line-height: 1.2; font-weight: normal;">Drop<br>Picture<br>Here</span>`; else div.innerHTML = "<span>?</span>"; div.addEventListener('dragover', e => { e.preventDefault(); div.classList.add('hover'); }); div.addEventListener('dragleave', () => div.classList.remove('hover')); div.addEventListener('drop', this.handleDrop); za.appendChild(div); }); const dk = document.getElementById('dock'); dk.innerHTML = ""; const items = [...d.items].sort(() => Math.random() - 0.5); items.forEach(i => { const div = document.createElement('div'); div.id = i.id; div.draggable = true; const txt = i.type === 'txt' ? i.text : (i.label || "Picture"); if(i.type === 'txt') { div.className = "draggable"; div.innerText = i.text; } else { div.className = "draggable img-card"; div.innerHTML = `<img src="${i.img}.png" onerror="this.src='${i.img}.jpg'" draggable="false">`; } div.addEventListener('dragstart', e => { AudioSys.unlock(); AudioSys.speak(txt); e.dataTransfer.setData('text', i.id); setTimeout(() => div.style.opacity = 0.5, 0); }); div.addEventListener('touchstart', () => { AudioSys.unlock(); AudioSys.speak(txt); }); div.addEventListener('dragend', () => div.style.opacity = 1); dk.appendChild(div); }); clearInterval(this.state.timer); this.state.timer = setInterval(() => { this.state.time--; document.getElementById('ui-timer').innerText = this.state.time; if(this.state.time <= 10) document.getElementById('ui-timer').style.color = "var(--danger)"; if(this.state.time <= 0) this.endLevel(false); }, 1000); this.resizeBoard(); },
+            
+            handleDrop: function(e) { e.preventDefault(); const z = e.currentTarget; z.classList.remove('hover'); if(z.classList.contains('correct')) return; const iId = e.dataTransfer.getData('text'); const tId = z.getAttribute('data-target'); const iEl = document.getElementById(iId); if(!iEl) return; if(iId === tId) { AudioSys.playCorrect(); const p = ["Correct!", "Good job!", "Excellent!", "Well done!"]; AudioSys.speak(p[Math.floor(Math.random() * p.length)]); z.classList.add('correct'); if(iEl.classList.contains('img-card')) z.innerHTML = iEl.innerHTML; else z.innerText = iEl.innerText; iEl.style.display = 'none'; Game.state.tempScore += 10; Game.state.correct++; Game.updateScore(); if(Game.state.correct === Game.data[Game.state.lv].items.length) setTimeout(() => Game.endLevel(true), 500); } else { AudioSys.playWrong(); AudioSys.speak("Try again!"); z.style.borderColor = "var(--danger)"; z.style.animation = "shake 0.3s"; setTimeout(() => { z.style.borderColor = ""; z.style.animation = ""; }, 300); } },
             updateScore: function() { document.getElementById('ui-score').innerText = Game.state.score + Game.state.tempScore; },
-            endLevel: function(win) {
-                clearInterval(this.state.timer);
-                const modal = document.getElementById('modal'); const title = document.getElementById('modal-title');
-                const msg = document.getElementById('modal-msg'); const btn = document.getElementById('modal-btn');
-                const statBox = document.getElementById('stat-box-container');
-                modal.style.display = 'flex';
-                document.getElementById('stat-correct').innerText = `${this.state.correct} / ${this.data[this.state.lv].items.length}`;
-                document.getElementById('stat-score').innerText = this.state.tempScore;
-
-                if(win) {
-                    AudioSys.playCorrect(); title.innerText = "🎉 EXCELLENT!"; title.style.color = "var(--success)"; statBox.style.borderColor = "var(--success)";
-                    if(this.state.lv === 1) {
-                        msg.innerText = "You completed Level 1. Ready for Level 2?"; btn.innerText = "Go to Level 2 ➡"; btn.style.background = "var(--primary)";
-                        btn.onclick = () => { Game.state.score += Game.state.tempScore; modal.style.display = 'none'; Game.loadLevel(2); }
-                    } else {
-                        AudioSys.speak("Congratulations! You won!"); msg.innerText = "CONGRATULATIONS! YOU WON THE GAME! 🏆";
-                        btn.innerText = "Play Again 🔄"; btn.style.background = "var(--success)"; btn.onclick = () => location.reload();
-                    }
-                } else {
-                    AudioSys.playWrong(); title.innerText = "⌛ TIME'S UP!"; title.style.color = "var(--danger)"; statBox.style.borderColor = "var(--danger)";
-                    msg.innerText = "Oh no! Time ran out. Let's try this level again!"; btn.innerText = "Retry Level ↩"; btn.style.background = "var(--warning)";
-                    btn.onclick = () => { modal.style.display = 'none'; Game.loadLevel(Game.state.lv); document.getElementById('ui-score').innerText = Game.state.score; }
-                }
-            }
+            endLevel: function(win) { clearInterval(this.state.timer); const m = document.getElementById('modal'); const t = document.getElementById('modal-title'); const msg = document.getElementById('modal-msg'); const b = document.getElementById('modal-btn'); const sb = document.getElementById('stat-box-container'); m.style.display = 'flex'; document.getElementById('stat-correct').innerText = `${this.state.correct} / ${this.data[this.state.lv].items.length}`; document.getElementById('stat-score').innerText = this.state.tempScore; if(win) { AudioSys.playCorrect(); t.innerText = "🎉 EXCELLENT!"; t.style.color = "var(--success)"; sb.style.borderColor = "var(--success)"; if(this.state.lv === 1) { msg.innerText = "You completed Level 1. Ready for Level 2?"; b.innerText = "Go to Level 2 ➡"; b.style.background = "var(--primary)"; b.onclick = () => { Game.state.score += Game.state.tempScore; m.style.display = 'none'; Game.loadLevel(2); } } else { AudioSys.speak("Congratulations! You won!"); msg.innerText = "CONGRATULATIONS! YOU WON THE GAME! 🏆"; b.innerText = "Play Again 🔄"; b.style.background = "var(--success)"; b.onclick = () => location.reload(); } } else { AudioSys.playWrong(); t.innerText = "⌛ TIME'S UP!"; t.style.color = "var(--danger)"; sb.style.borderColor = "var(--danger)"; msg.innerText = "Oh no! Time ran out. Let's try this level again!"; b.innerText = "Retry Level ↩"; b.style.background = "var(--warning)"; b.onclick = () => { m.style.display = 'none'; Game.loadLevel(Game.state.lv); document.getElementById('ui-score').innerText = Game.state.score; } } }
         };
-
-        const style = document.createElement('style');
-        style.innerHTML = `@keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }`;
-        document.head.appendChild(style);
+        const s = document.createElement('style'); s.innerHTML = `@keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }`; document.head.appendChild(s);
     </script>
-
-    <script src="https://bernardo-castilho.github.io/DragDropTouch/DragDropTouch.js"></script>
-
+    <script src="DragDropTouch.js"></script>
 </body>
 </html>
