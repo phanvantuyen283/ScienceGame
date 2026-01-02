@@ -236,6 +236,7 @@
             data: {
                 1: {
                     title: "LEVEL 1: Frog Life Cycle 🐸",
+                    time : 20
                     guide: "Drag the words to the correct spots.",
                     bg: "frog.jpg",
                     items: [
@@ -255,6 +256,7 @@
                 },
                 2: {
                     title: "LEVEL 2: Bird Life Cycle 🐦",
+                    time: 40
                     guide: "Drag pictures and words to the correct spots.",
                     bg: "birb_bg.jpg", 
                     items: [
@@ -311,12 +313,12 @@
             },
 
             loadLevel: function(lv) {
-                this.state.lv = lv; this.state.time = 20; this.state.correct = 0; this.state.tempScore = 0;
+                this.state.lv = lv; this.state.time = d.time ; this.state.correct = 0; this.state.tempScore = 0;
                 const d = this.data[lv];
                 document.getElementById('ui-title').innerText = d.title;
                 document.getElementById('ui-guide').innerText = d.guide;
                 document.getElementById('game-bg').src = d.bg;
-                document.getElementById('ui-timer').innerText = 20; 
+                document.getElementById('ui-timer').innerText = this.state.time; 
                 document.getElementById('ui-timer').style.color = "var(--warning)";
 
                 const zArea = document.getElementById('zones-area'); zArea.innerHTML = "";
